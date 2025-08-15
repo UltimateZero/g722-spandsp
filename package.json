@@ -1,0 +1,60 @@
+{
+    "name": "g722-spandsp",
+    "version": "1.0.0",
+    "description": "Node-API bindings for SpanDSP G.722 (encode/decode) with ESM+CJS loaders.",
+    "license": "MIT",
+    "author": "Mohamed Taha",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/UltimateZero/g722-spandsp.git"
+    },
+    "bugs": {
+      "url": "https://github.com/UltimateZero/g722-spandsp/issues"
+    },
+    "homepage": "https://github.com/UltimateZero/g722-spandsp#readme",
+    "keywords": [
+      "g722",
+      "spandsp",
+      "telephony",
+      "voip",
+      "codec",
+      "pcm16",
+      "asterisk",
+      "node-addon-api"
+    ],
+    "main": "./cjs/index.cjs",
+    "module": "./esm/index.js",
+    "types": "./index.d.ts",
+    "exports": {
+      "types": "./index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./cjs/index.cjs"
+    },
+    "files": [
+      "esm/",
+      "cjs/",
+      "src/",
+      "build/Release/*.node",
+      "binding.gyp",
+      "index.d.ts",
+      "LICENSE",
+      "README.md"
+    ],
+    "scripts": {
+      "build": "node-gyp rebuild",
+      "rebuild": "node-gyp rebuild",
+      "clean": "node-gyp clean || true; rm -rf build",
+      "test": "node test/test.js"
+    },
+    "gypfile": true,
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "dependencies": {
+      "node-addon-api": "^7.0.0",
+      "node-gyp-build": "^4.8.2"
+    },
+    "devDependencies": {
+      "node-gyp": "^11.3.0"
+    }
+  }

@@ -21,3 +21,4 @@ export class G722Encoder {
     G722Decoder: typeof G722Decoder;
   };
   export default _default;
+  

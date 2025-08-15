@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # for npm provenance (optional but recommended)
+  id-token: write  # enables npm provenance
 
 jobs:
   publish-npm:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install OS deps (for a sanity build before publish)
+      - name: Install OS deps
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential python3 pkg-config libspandsp-dev
@@ -35,6 +35,4 @@ jobs:
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          # --provenance enables SLSA provenance (needs id-token: write)
-          npm publish --access public --provenance
+        run: npm publish --access public --provenance

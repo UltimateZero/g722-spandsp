@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-test:
+    name: ${{ matrix.os }} / node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+        node: [ 18, 20 ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OS deps
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y build-essential python3 pkg-config libspandsp-dev
+          else
+            brew update
+            brew install spandsp pkg-config
+          fi
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install (build from source)
+        run: npm ci --build-from-source
+
+      - name: Test
+        run: npm test

@@ -2,20 +2,20 @@ name: publish
 
 on:
   release:
-    types: [published]        # fires when a draft is published or a release is created as published
+    types: [published]          # fires when a release is *published*
   push:
     tags:
-      - 'v*'                  # fallback: publish on tag push (v1.2.3)
-  workflow_dispatch:          # manual button: Actions → publish → Run workflow
+      - 'v*'                    # fallback: publish on tag push (v1.2.3)
+  workflow_dispatch:            # manual publish
     inputs:
       tag:
-        description: 'Tag to publish (e.g., v1.2.3). Leave blank to use latest release/tag.'
+        description: 'Tag to publish (e.g., v1.0.1)'
         required: false
         type: string
 
 permissions:
   contents: read
-  id-token: write             # for npm provenance
+  id-token: write               # npm provenance
 
 jobs:
   publish-npm:
@@ -39,7 +39,6 @@ jobs:
           elif [ "${{ github.event_name }}" = "release" ]; then
             TAG="${{ github.event.release.tag_name }}"
           elif [ "${{ github.event_name }}" = "push" ]; then
-            # refs/tags/v1.2.3
             TAG="${GITHUB_REF_NAME}"
           else
             echo "No tag found"; exit 1
@@ -59,19 +58,16 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
-      - name: Use tag's package.json (if tag exists)
-        run: |
-          # If the tag exists, check it out so package.json matches the code that was tagged.
-          git checkout "refs/tags/${{ steps.tag.outputs.tag }}" || true
+      - name: Checkout tag (if exists)
+        run: git checkout "refs/tags/${{ steps.tag.outputs.tag }}" || true
 
       - name: Verify tag matches package.json version
         run: |
           PKG_VERSION="v$(node -p "require('./package.json').version")"
           TAG="${{ steps.tag.outputs.tag }}"
-          echo "package.json version: $PKG_VERSION"
-          echo "tag: $TAG"
+          echo "package.json: $PKG_VERSION  tag: $TAG"
           if [ "$PKG_VERSION" != "$TAG" ]; then
-            echo "::error::Tag $TAG does not match package.json version $PKG_VERSION"
+            echo "::error::Tag $TAG does not match package.json $PKG_VERSION"
             exit 1
           fi
 
@@ -80,11 +76,6 @@ jobs:
 
       - name: Test
         run: npm test
-
-      - name: Who am I (npm)
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm whoami || true
 
       - name: Publish to npm
         env:

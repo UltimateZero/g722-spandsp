@@ -1,6 +1,6 @@
 {
   "name": "g722-spandsp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node-API bindings for SpanDSP G.722 (encode/decode) with ESM+CJS loaders.",
   "license": "MIT",
   "author": "Mohamed Taha",
